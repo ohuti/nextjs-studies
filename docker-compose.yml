@@ -18,6 +18,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongodata:/data/db
 
   mongo-express:
     image: mongo-express
@@ -47,8 +49,12 @@ services:
     ports:
       - 8080:8080
     command: start-dev
+    volumes:
+      - keycloakdata:/opt/jboss/keycloak/standalone/data/
     depends_on:
       - postgres
 
 volumes:
   pgdata:
+  keycloakdata:
+  mongodata:

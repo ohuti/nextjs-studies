@@ -1,5 +1,4 @@
 'use client'
-import React from 'react'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,15 +8,16 @@ import { signIn, signOut, useSession, getProviders, ClientSafeProvider, LiteralU
 
 const Nav = () => {
   const isUserLoggedIn = true
+  const { data: session } = useSession()
   const [providers, setProviders] = useState<Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider> | null>()
   const [toggleDropDown, setToggleDropDown] = useState(false)
 
   useEffect(() => {
-    const prov = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders()
       setProviders(response)
     }
-    prov()
+    setUpProviders()
   }, [])
   
   return (
@@ -35,7 +35,7 @@ const Nav = () => {
 
       {/* Desktop navigation */}
       <div className='sm:flex hidden'>
-        { isUserLoggedIn ? (
+        { session?.user ? (
           <div className='flex gap-3 md:gap-5'>
             <Link href='/create-prompt' className='black_btn'>
               Create Post
@@ -51,7 +51,7 @@ const Nav = () => {
 
             <Link href='/profile'>
               <Image
-                src='/assets/images/logo.svg'
+                src={session.user.image ?? '/assets/images/user-icon.svg'}
                 width={37}
                 height={37}
                 className='rounded-full'
@@ -80,10 +80,10 @@ const Nav = () => {
 
       {/* Mobile navigation */}
       <div className='sm:hidden flex relative'>
-        {isUserLoggedIn ? (
+        { session?.user ? (
           <div className='flex'>
             <Image
-              src='/assets/images/logo.svg'
+              src={session.user.image ?? '/assets/images/user-icon.svg'}
               width={37}
               height={37}
               className='rounded-full'
